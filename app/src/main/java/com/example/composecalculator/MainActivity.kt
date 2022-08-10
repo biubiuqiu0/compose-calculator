@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.composecalculator.ui.CalculatorViewModel
 import com.example.composecalculator.ui.theme.CYellow
 import com.example.composecalculator.ui.theme.ComposeCalculatorTheme
 
@@ -30,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    Calculator()
+                    Calculator(viewModel = viewModel())
                 }
             }
         }
@@ -38,15 +41,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Calculator() {
-
-    val input = remember {
-        mutableStateOf("")
-    }
-
-    val result = remember {
-        mutableStateOf("")
-    }
+fun Calculator(viewModel: CalculatorViewModel) {
 
     Column(modifier = Modifier.fillMaxHeight()) {
         Spacer(
@@ -56,21 +51,23 @@ fun Calculator() {
         )
         // input
         Text(
-            text = input.value,
+            text = viewModel.inputState.value,
             fontSize = 38.sp,
             color = Color.Gray,
+            textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 16.dp)
+                .padding(start = 16.dp, end = 16.dp),
+            lineHeight = 38.sp
         )
 
         // Result
 
         Text(
-            text = result.value,
+            text = viewModel.resultState.value,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 16.dp),
+                .padding(start = 16.dp, end = 16.dp),
             fontSize = 70.sp,
             textAlign = TextAlign.End
         )
@@ -82,14 +79,15 @@ fun Calculator() {
                 .fillMaxWidth()
                 .background(CYellow)
         )
-        //Del % \
+        //Del \
         Row(
             modifier = Modifier.height(76.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Bottom
         ) {
 
-            BoxText(modifier = Modifier.weight(2f), "DEL", Color.Black)
+            BoxText(modifier = Modifier.weight(3f), "DEL", Color.Black)
+
 
             Spacer(
                 modifier = Modifier
@@ -99,17 +97,7 @@ fun Calculator() {
             )
 
 
-            BoxText(modifier = Modifier.weight(1f), "%")
-
-            Spacer(
-                modifier = Modifier
-                    .width(0.5.dp)
-                    .fillMaxHeight()
-                    .background(Color.Gray)
-            )
-
-
-            BoxText(modifier = Modifier.weight(1f), "\\")
+            BoxText(modifier = Modifier.weight(1f), "÷")
         }
 
         Spacer(
@@ -213,18 +201,11 @@ fun Calculator() {
                 .background(Color.Gray)
         )
         Row(modifier = Modifier.height(76.dp), horizontalArrangement = Arrangement.Center) {
-            BoxText(modifier = Modifier.weight(1f), ".")
-            Spacer(
-                modifier = Modifier
-                    .width(0.5.dp)
-                    .fillMaxHeight()
-                    .background(Color.Gray)
-            )
-            BoxText(modifier = Modifier.weight(1f), "0")
+            BoxText(modifier = Modifier.weight(2f), "0")
 
             BoxText(
                 modifier = Modifier
-                    .weight(2f)
+                    .weight(3f)
                     .background(CYellow), "=", Color.Black
             )
         }
@@ -236,15 +217,24 @@ fun Calculator() {
 @Composable
 fun DefaultPreview() {
     ComposeCalculatorTheme {
-        Calculator()
+        Calculator(viewModel())
     }
 }
 
 
 @Composable
-fun BoxText(modifier: Modifier, text: String, color: Color = Color.Gray) {
+fun BoxText(
+    modifier: Modifier,
+    text: String,
+    color: Color = Color.Gray,
+    viewModel: CalculatorViewModel = viewModel()
+) {
     Box(
-        modifier = modifier.fillMaxHeight(), contentAlignment = Alignment.Center
+        modifier = modifier
+            .fillMaxHeight()
+            .clickable {
+                viewModel.input(text)
+            }, contentAlignment = Alignment.Center
     ) {
         Text(
             text = text, textAlign = TextAlign.Center, fontSize = 29.sp, color = color
