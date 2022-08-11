@@ -34,7 +34,13 @@ class CalculatorViewModel : ViewModel() {
                     calculateDone = true
                 }
                 "DEL" -> {
-                    _inputState.value = _inputState.value.dropLast(1)
+                    //重置
+                    if (calculateDone) {
+                        _inputState.value = ""
+                        _resultState.value = "0"
+                    } else {
+                        _inputState.value = _inputState.value.dropLast(1)
+                    }
                 }
                 else -> {
                     val cache = _inputState.value
@@ -64,15 +70,14 @@ class CalculatorViewModel : ViewModel() {
     }
 
     private fun calculate() {
-        if(inputState.value.last() in inputCalculateKey){
+        if (inputState.value.last() in inputCalculateKey) {
             _resultState.value = num1.toString()
-        }else {
+        } else {
             if (inputCalculateKey.isNotEmpty() && inputState.value.isNotEmpty()) {
                 val cache = inputState.value
-                num2 = cache.subSequence(
-                    cache.indexOfLast { it.toString() == inputCalculateKey } + 1,
-                    cache.length
-                ).toString().toFloat()
+                num2 =
+                    cache.subSequence(cache.indexOfLast { it.toString() == inputCalculateKey } + 1,
+                        cache.length).toString().toFloat()
                 _resultState.value = when (inputCalculateKey) {
                     "+" -> {
                         num1 + num2
