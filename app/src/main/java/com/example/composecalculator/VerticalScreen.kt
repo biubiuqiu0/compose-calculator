@@ -158,7 +158,7 @@ fun VerticalScreen(viewModel: CalculatorViewModel = viewModel()) {
                     .fillMaxHeight()
                     .background(Color.Gray)
             )
-            BoxText(modifier = Modifier.weight(1f), "4")
+            BoxText(modifier = Modifier.weight(1f), "3")
             Spacer(
                 modifier = Modifier
                     .width(0.5.dp)
