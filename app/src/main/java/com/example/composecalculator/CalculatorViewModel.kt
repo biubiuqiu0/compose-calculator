@@ -1,4 +1,4 @@
-package com.example.composecalculator.ui
+package com.example.composecalculator
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +38,7 @@ class CalculatorViewModel : ViewModel() {
                     if (calculateDone) {
                         _inputState.value = ""
                         _resultState.value = "0"
+                        calculateDone = false
                     } else {
                         _inputState.value = _inputState.value.dropLast(1)
                     }
@@ -47,6 +48,13 @@ class CalculatorViewModel : ViewModel() {
 
                     //如果尚未输入任何数字时 输入了运算符号
                     if (cache.isEmpty() && key in calculateKeys) {
+                        return
+                    }
+                    //上次计算完毕，且 key为数字
+                    if (calculateDone && key.last().isDigit()) {
+                        _inputState.value = key
+                        _resultState.value = "0"
+                        calculateDone = false
                         return
                     }
 
